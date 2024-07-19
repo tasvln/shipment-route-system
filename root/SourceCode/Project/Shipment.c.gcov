@@ -1,0 +1,297 @@
+        -:    0:Source:Shipment.c
+        -:    0:Graph:Shipment.gcno
+        -:    0:Data:Shipment.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        -:    1:#define _CRT_SECURE_NO_WARNINGS
+        -:    2:#include <stdio.h>
+        -:    3:#include <string.h>
+        -:    4:#include "mapping.h"
+        -:    5:#include "Shipment.h"
+        -:    6:
+        7:    7:int validatePackage(int weight, double size, struct Point destination)
+        -:    8:{
+        7:    9:  struct Map map = populateMap();
+        7:   10:  int isValid = 1;
+        -:   11:
+        -:   12:  // check if package is valid by weight, size, and destination
+        7:   13:  if (weight < 0 || weight > MAX_TRUCK_WEIGHT)
+        -:   14:  {
+        1:   15:    printf("Invalid weight (must be 1-1000 Kg.)\n");
+        1:   16:    isValid = 0;
+        1:   17:  }
+        6:   18:  else if (size != MAX_PACKAGE_SIZE && size != MID_PACKAGE_SIZE && size != MIN_PACKAGE_SIZE)
+        -:   19:  {
+        1:   20:    printf("Invalid size\n");
+        1:   21:    isValid = 0;
+        1:   22:  }
+        5:   23:  else if ((destination.row < 0 || destination.row > MAP_ROWS) || (destination.col < 0 || destination.col > MAP_COLS))
+        -:   24:  {
+        1:   25:    printf("Invalid destination\n");
+        1:   26:    isValid = 0;
+        1:   27:  }
+        4:   28:  else if (map.squares[(int)destination.row][(int)destination.col] == 0)
+        -:   29:  {
+    #####:   30:    printf("Invalid destination\n");
+    #####:   31:    isValid = 0;
+    #####:   32:  }
+        7:   33:  return isValid;
+        -:   34:}
+        -:   35:
+       12:   36:int validateTruck(struct Truck truck, struct Package package)
+        -:   37:{
+       12:   38:  int isValid = 0;
+        -:   39:
+        -:   40:  // check if truck is valid by weight and size
+       12:   41:  if ((truck.weight + package.weight >= MAX_TRUCK_WEIGHT) || (truck.size + package.size >= MAX_TRUCK_SIZE))
+        -:   42:  {
+        1:   43:    isValid = 1;
+        1:   44:  }
+       12:   45:  return isValid;
+        -:   46:}
+        -:   47:
+        3:   48:struct Truck createTruck(int truckId, int weight, double size, struct Route route, struct Package *packages)
+        -:   49:{
+        3:   50:  struct Truck truck = {0};
+        -:   51:
+        3:   52:  truck.truckId = truckId;
+        3:   53:  truck.weight = weight;
+        3:   54:  truck.size = size;
+        3:   55:  truck.route = route;
+        3:   56:  truck.packages = packages;
+        -:   57:
+        3:   58:  return truck;
+        -:   59:}
+        -:   60:
+        4:   61:void assignPackage(const struct Map *map, struct Package package, struct Truck trucks[MAX_TRUCKS])
+        -:   62:{
+        -:   63:  // shortest path
+        4:   64:  struct Route shortPath = {0};
+        -:   65:
+        4:   66:  struct Route blueShortestPath = {0};
+        4:   67:  double blueDistance = 0;
+        4:   68:  struct Route greenShortestPath = {0};
+        4:   69:  double greenDistance = 0;
+        4:   70:  struct Route yellowShortestPath = {0};
+        4:   71:  double yellowDistance = 0;
+        -:   72:
+        -:   73:  // for each truck, check if the package is valid
+       16:   74:  for (int i = 0; i < 3; i++)
+        -:   75:  {
+       12:   76:    int isValid = validateTruck(trucks[i], package);
+        -:   77:
+       12:   78:    if (isValid != 1)
+        -:   79:    {
+      497:   80:      for (int j = 0; j < trucks[i].route.numPoints; j++)
+        -:   81:      {
+        -:   82:
+      486:   83:        double currDistance = distance(&trucks[i].route.points[j], &package.destination);
+        -:   84:
+      486:   85:        if (trucks[i].route.routeSymbol == BLUE)
+        -:   86:        {
+      168:   87:          if (blueDistance == 0 || currDistance < blueDistance)
+        -:   88:          {
+      109:   89:            blueDistance = currDistance;
+        -:   90:
+      109:   91:            blueShortestPath = shortestPath(map, trucks[i].route.points[j], package.destination);
+        -:   92:
+      109:   93:            if (hasDestination(&blueShortestPath, package) == 0 && blueDistance == 1)
+        -:   94:            {
+        1:   95:              blueShortestPath.numPoints = 1;
+        1:   96:            }
+      109:   97:          }
+      168:   98:        }
+      318:   99:        else if (trucks[i].route.routeSymbol == GREEN)
+        -:  100:        {
+      126:  101:          if (greenDistance == 0 || currDistance < greenDistance)
+        -:  102:          {
+       86:  103:            greenDistance = currDistance;
+        -:  104:
+       86:  105:            greenShortestPath = shortestPath(map, trucks[i].route.points[j], package.destination);
+        -:  106:
+       86:  107:            if (hasDestination(&greenShortestPath, package) == 0 && greenDistance == 1)
+        -:  108:            {
+    #####:  109:              greenShortestPath.numPoints = 1;
+    #####:  110:            }
+       86:  111:          }
+      126:  112:        }
+      192:  113:        else if (trucks[i].route.routeSymbol == YELLOW)
+        -:  114:        {
+      192:  115:          if (yellowDistance == 0 || currDistance < yellowDistance)
+        -:  116:          {
+      102:  117:            yellowDistance = currDistance;
+        -:  118:
+      102:  119:            yellowShortestPath = shortestPath(map, trucks[i].route.points[j], package.destination);
+        -:  120:
+      102:  121:            if (hasDestination(&yellowShortestPath, package) == 0 && yellowDistance == 1)
+        -:  122:            {
+    #####:  123:              yellowShortestPath.numPoints = 1;
+    #####:  124:            }
+      102:  125:          }
+      192:  126:        }
+      486:  127:      }
+       11:  128:    }
+       12:  129:  }
+        -:  130:
+        -:  131:  // if the distance of one of the trucks is 0, then the package should be shipped by the other truck with the shortest distance
+        4:  132:  if (blueDistance != 0 && greenDistance != 0 && yellowDistance != 0)
+        -:  133:  {
+        3:  134:    if (blueDistance < greenDistance && blueDistance < yellowDistance)
+        -:  135:    {
+        1:  136:      shortPath = blueShortestPath;
+        1:  137:      shortPath.routeSymbol = BLUE;
+        1:  138:    }
+        2:  139:    else if (greenDistance < blueDistance && greenDistance < yellowDistance)
+        -:  140:    {
+        2:  141:      shortPath = greenShortestPath;
+        2:  142:      shortPath.routeSymbol = GREEN;
+        2:  143:    }
+    #####:  144:    else if (yellowDistance < blueDistance && yellowDistance < greenDistance)
+        -:  145:    {
+    #####:  146:      shortPath = yellowShortestPath;
+    #####:  147:      shortPath.routeSymbol = YELLOW;
+    #####:  148:    }
+        3:  149:  }
+        -:  150:  else
+        -:  151:  {
+        1:  152:    if (blueDistance == 0 && greenDistance == 0 && yellowDistance == 0)
+        -:  153:    {
+    #####:  154:      shortPath.numPoints = 0;
+    #####:  155:    }
+        1:  156:    else if (blueDistance == 0 && greenDistance == 0)
+        -:  157:    {
+    #####:  158:      shortPath = yellowShortestPath;
+    #####:  159:      shortPath.routeSymbol = YELLOW;
+    #####:  160:    }
+        1:  161:    else if (blueDistance == 0 && yellowDistance == 0)
+        -:  162:    {
+    #####:  163:      shortPath = greenShortestPath;
+    #####:  164:      shortPath.routeSymbol = GREEN;
+    #####:  165:    }
+        1:  166:    else if (greenDistance == 0 && yellowDistance == 0)
+        -:  167:    {
+    #####:  168:      shortPath = blueShortestPath;
+    #####:  169:      shortPath.routeSymbol = BLUE;
+    #####:  170:    }
+        1:  171:    else if (blueDistance == 0)
+        -:  172:    {
+    #####:  173:      if (greenDistance < yellowDistance)
+        -:  174:      {
+    #####:  175:        shortPath = greenShortestPath;
+    #####:  176:        shortPath.routeSymbol = GREEN;
+    #####:  177:      }
+        -:  178:      else
+        -:  179:      {
+    #####:  180:        shortPath = yellowShortestPath;
+    #####:  181:        shortPath.routeSymbol = YELLOW;
+        -:  182:      }
+    #####:  183:    }
+        1:  184:    else if (greenDistance == 0)
+        -:  185:    {
+        1:  186:      if (blueDistance < yellowDistance)
+        -:  187:      {
+        1:  188:        shortPath = blueShortestPath;
+        1:  189:        shortPath.routeSymbol = BLUE;
+        1:  190:      }
+        -:  191:      else
+        -:  192:      {
+    #####:  193:        shortPath = yellowShortestPath;
+    #####:  194:        shortPath.routeSymbol = YELLOW;
+        -:  195:      }
+        1:  196:    }
+    #####:  197:    else if (yellowDistance == 0)
+        -:  198:    {
+    #####:  199:      if (blueDistance < greenDistance)
+        -:  200:      {
+    #####:  201:        shortPath = blueShortestPath;
+    #####:  202:        shortPath.routeSymbol = BLUE;
+    #####:  203:      }
+        -:  204:      else
+        -:  205:      {
+    #####:  206:        shortPath = greenShortestPath;
+    #####:  207:        shortPath.routeSymbol = GREEN;
+        -:  208:      }
+    #####:  209:    }
+        -:  210:  }
+        -:  211:
+        4:  212:  display(shortPath, package);
+        -:  213:
+        4:  214:  if (shortPath.routeSymbol == BLUE)
+        -:  215:  {
+        2:  216:    trucks[0].weight += package.weight;
+        2:  217:    trucks[0].size += package.size;
+        2:  218:  }
+        2:  219:  else if (shortPath.routeSymbol == GREEN)
+        -:  220:  {
+        2:  221:    trucks[1].weight += package.weight;
+        2:  222:    trucks[1].size += package.size;
+        2:  223:  }
+    #####:  224:  else if (shortPath.routeSymbol == YELLOW)
+        -:  225:  {
+    #####:  226:    trucks[2].weight += package.weight;
+    #####:  227:    trucks[2].size += package.size;
+    #####:  228:  }
+        4:  229:}
+        -:  230:
+      297:  231:int hasDestination(struct Route *route, struct Package package)
+        -:  232:{
+      297:  233:  int found = 0, i = 0;
+        -:  234:
+     5013:  235:  for (i = 0; i < route->numPoints; i++)
+        -:  236:  {
+     4716:  237:    if (eqPt(route->points[i], package.destination) == 1)
+        -:  238:    {
+    #####:  239:      found = 1;
+    #####:  240:    }
+     4716:  241:  }
+        -:  242:
+      297:  243:  return found;
+        -:  244:}
+        -:  245:
+        4:  246:void display(struct Route route, struct Package package)
+        -:  247:{
+        4:  248:  if (route.routeSymbol == 2)
+        -:  249:  {
+        2:  250:    printf("Ship on BLUE LINE, ");
+        2:  251:  }
+        2:  252:  else if (route.routeSymbol == 4)
+        -:  253:  {
+        2:  254:    printf("Ship on GREEN LINE, ");
+        2:  255:  }
+    #####:  256:  else if (route.routeSymbol == 8)
+        -:  257:  {
+    #####:  258:    printf("Ship on YELLOW LINE, ");
+    #####:  259:  }
+        -:  260:
+        4:  261:  if (route.numPoints != 0)
+        -:  262:  {
+        4:  263:    if (route.numPoints == 1)
+        -:  264:    {
+        1:  265:      printf("no diversion");
+        1:  266:    }
+        -:  267:    else
+        -:  268:    {
+        3:  269:      printf("divert: ");
+       17:  270:      for (int i = 0; i < route.numPoints; i++)
+        -:  271:      {
+       14:  272:        if (i == route.numPoints - 1)
+        -:  273:        {
+        3:  274:          printf("%d%c", route.points[i].row + 1, 'A' + route.points[i].col);
+        3:  275:        }
+        -:  276:        else
+        -:  277:        {
+       11:  278:          printf("%d%c, ", route.points[i].row + 1, 'A' + route.points[i].col);
+        -:  279:        }
+       14:  280:      }
+        3:  281:      if (package.destination.row != route.points[route.numPoints - 1].row || package.destination.col != route.points[route.numPoints - 1].col)
+        -:  282:      {
+        3:  283:        printf(", %d%c", package.destination.row + 1, 'A' + package.destination.col);
+        3:  284:      }
+        -:  285:    }
+        4:  286:  }
+        -:  287:  else
+        -:  288:  {
+    #####:  289:    printf("Ships tommorow");
+        -:  290:  }
+        4:  291:  printf("\n");
+        4:  292:}

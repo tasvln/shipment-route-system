@@ -1,0 +1,95 @@
+        -:    0:Source:main.c
+        -:    0:Graph:main.gcno
+        -:    0:Data:main.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        -:    1:#define _CRT_SECURE_NO_WARNINGS
+        -:    2:#include <stdio.h>
+        -:    3:#include <string.h>
+        -:    4:#include "Shipment.h"
+        -:    5:
+        1:    6:int main(void)
+        -:    7:{
+        1:    8:  struct Map baseMap = populateMap();
+        -:    9:
+        1:   10:  struct Route blueRoute = getBlueRoute();
+        1:   11:  struct Route greenRoute = getGreenRoute();
+        1:   12:  struct Route yellowRoute = getYellowRoute();
+        -:   13:
+        -:   14:  // create trucks
+        1:   15:  struct Truck blueTruck = createTruck(1, 0, 0, blueRoute, NULL);
+        1:   16:  struct Truck greenTruck = createTruck(2, 0, 0, greenRoute, NULL);
+        1:   17:  struct Truck yellowTruck = createTruck(3, 0, 0, yellowRoute, NULL);
+        -:   18:
+        1:   19:  struct Truck trucks[MAX_TRUCKS] = {blueTruck, greenTruck, yellowTruck};
+        -:   20:
+        1:   21:  int input, flag = 0, isValid;
+        -:   22:  size_t i;
+        -:   23:  int weight;
+        -:   24:  size_t pointLength;
+        -:   25:  double size;
+        -:   26:  char point[3];
+        -:   27:
+        1:   28:  struct Point destination = {0};
+        1:   29:  struct Package package = {0};
+        -:   30:
+        1:   31:  printf("=================\n");
+        1:   32:  printf("Seneca Deliveries\n");
+        1:   33:  printf("=================\n");
+        -:   34:
+        1:   35:  do
+        -:   36:  {
+        -:   37:    // get input from user
+        8:   38:    printf("Enter shipment weight, box size and destination (0 0 x to stop): ");
+        8:   39:    input = scanf("%d %lf %s", &weight, &size, point);
+        -:   40:
+        8:   41:    pointLength = strlen(point);
+        -:   42:
+        -:   43:    // check if input is valid
+        8:   44:    if (weight == 0 && size == 0 && point[0] == 'x')
+        -:   45:    {
+        1:   46:      printf("Thank you for shipping with Seneca!\n");
+        1:   47:      flag = 1;
+        1:   48:    }
+        -:   49:    else
+        -:   50:    {
+        7:   51:      destination.row = 0;
+        7:   52:      destination.col = 0;
+        -:   53:
+        7:   54:      if (input != 3)
+        -:   55:      {
+    #####:   56:        printf("Invalid Package Input\n");
+    #####:   57:      }
+        -:   58:      else
+        -:   59:      {
+        -:   60:
+       25:   61:        for (i = 0; i < pointLength; i++)
+        -:   62:        {
+       18:   63:          if (point[i] >= '0' && point[i] <= '9')
+        -:   64:          {
+       11:   65:            destination.row = destination.row * 10 + (point[i] - '0');
+       11:   66:          }
+        7:   67:          else if (point[i] >= 'A' && point[i] <= 'Z')
+        -:   68:          {
+        6:   69:            destination.col = destination.col * 26 + (point[i] - 'A');
+        6:   70:          }
+       18:   71:        }
+        -:   72:
+        -:   73:        // check if package is valid
+        7:   74:        isValid = validatePackage(weight, size, destination);
+        -:   75:
+        7:   76:        if (isValid == 1)
+        -:   77:        {
+        4:   78:          package.packageId = package.packageId + 1;
+        4:   79:          package.weight = weight;
+        4:   80:          package.size = size;
+        4:   81:          package.destination.col = destination.col;
+        4:   82:          package.destination.row = --destination.row;
+        4:   83:          assignPackage(&baseMap, package, trucks);
+        4:   84:        }
+        -:   85:      }
+        -:   86:    }
+        8:   87:  } while (flag == 0);
+        -:   88:
+        1:   89:  return 0;
+        -:   90:}

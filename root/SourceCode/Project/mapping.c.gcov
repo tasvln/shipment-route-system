@@ -1,0 +1,376 @@
+        -:    0:Source:mapping.c
+        -:    0:Graph:mapping.gcno
+        -:    0:Data:mapping.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        -:    1:#define _CRT_SECURE_NO_WARNINGS
+        -:    2:#include <stdio.h>
+        -:    3:#include "mapping.h"
+        -:    4:#include "math.h"
+        -:    5:
+        8:    6:struct Map populateMap()
+        -:    7:{
+        8:    8:  struct Map result = {
+        -:    9:      // 0	1  2  3  4  5  6  7  8  9  0  1  2  3  4  5  6  7  8  9  0  1  2  3  4
+        -:   10:      // A B  C  D  E  F  G  H  I  J  K  L  M  N  O  P  Q  R  S  T  U  V  W  X  Y
+        -:   11:      {
+        -:   12:          {0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, // 0
+        -:   13:          {0, 1, 1, 0, 1, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 0}, // 1
+        -:   14:          {0, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 0}, // 2
+        -:   15:          {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, // 3
+        -:   16:          {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, // 4
+        -:   17:          {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, // 5
+        -:   18:          {1, 1, 0, 0, 1, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0}, // 6
+        -:   19:          {1, 1, 0, 0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 1, 1, 1}, // 7
+        -:   20:          {0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 1, 1, 1}, // 8
+        -:   21:          {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, // 9
+        -:   22:          {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, // 10
+        -:   23:          {1, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1}, // 11
+        -:   24:          {1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1}, // 12
+        -:   25:          {1, 0, 1, 1, 1, 0, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1}, // 13
+        -:   26:          {1, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1}, // 14
+        -:   27:          {1, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1}, // 15
+        -:   28:          {0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, // 16
+        -:   29:          {0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, // 17
+        -:   30:          {0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}, // 18
+        -:   31:          {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, // 19
+        -:   32:          {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, // 20
+        -:   33:          {0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0}, // 21
+        -:   34:          {0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 0, 1, 1, 1, 1}, // 22
+        -:   35:          {0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1}, // 23
+        -:   36:          {0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}  // 24
+        -:   37:      },
+        -:   38:      MAP_ROWS,
+        -:   39:      MAP_COLS};
+        8:   40:  return result;
+        -:   41:}
+        -:   42:
+    #####:   43:int getNumRows(const struct Map *map)
+        -:   44:{
+    #####:   45:  return map->numRows;
+        -:   46:}
+        -:   47:
+    #####:   48:int getNumCols(const struct Map *map)
+        -:   49:{
+    #####:   50:  return map->numCols;
+        -:   51:}
+        -:   52:
+    #####:   53:void printMap(const struct Map *map, const int base1, const int alphaCols)
+        -:   54:{
+        -:   55:  //              01234567890123456
+        -:   56:  //              1248F
+    #####:   57:  char sym[] = {" XB?G?.?Y?-?*?+?P"};
+        -:   58:  int r, c, rowMax;
+        -:   59:
+    #####:   60:  rowMax = map->numRows + base1;
+        -:   61:
+    #####:   62:  printf("%4s", " ");
+    #####:   63:  for (c = 0; c < map->numCols; c++)
+        -:   64:  {
+    #####:   65:    if (alphaCols)
+    #####:   66:      printf("%c", 'A' + c);
+        -:   67:    else
+    #####:   68:      printf("%d", c % 10);
+    #####:   69:  }
+    #####:   70:  printf("\n");
+    #####:   71:  printf("%4s", " ");
+    #####:   72:  for (c = 0; c < map->numCols; c++)
+        -:   73:  {
+    #####:   74:    printf("-");
+    #####:   75:  }
+    #####:   76:  printf("\n");
+        -:   77:
+    #####:   78:  for (r = base1; r < rowMax; r++)
+        -:   79:  {
+    #####:   80:    printf("%3d|", r);
+    #####:   81:    for (c = 0; c < map->numCols; c++)
+        -:   82:    {
+    #####:   83:      printf("%c", sym[map->squares[r - base1][c]]);
+    #####:   84:    }
+    #####:   85:    printf("\n");
+    #####:   86:  }
+    #####:   87:}
+        -:   88:
+        1:   89:struct Route getBlueRoute()
+        -:   90:{
+        1:   91:  struct Route result = {
+        -:   92:      {
+        -:   93:          {0, 0},
+        -:   94:          {1, 0},
+        -:   95:          {2, 0},
+        -:   96:          {3, 0},
+        -:   97:          {4, 0},
+        -:   98:          {4, 1},
+        -:   99:          {4, 2},
+        -:  100:          {4, 3},
+        -:  101:          {4, 4},
+        -:  102:          {4, 5},
+        -:  103:          {4, 6},
+        -:  104:          {4, 7},
+        -:  105:          {4, 8},
+        -:  106:          {4, 9},
+        -:  107:          {5, 9},
+        -:  108:          {6, 9},
+        -:  109:          {7, 9},
+        -:  110:          {8, 9},
+        -:  111:          {9, 9},
+        -:  112:          {10, 9},
+        -:  113:          {10, 10},
+        -:  114:          {11, 10},
+        -:  115:          {12, 10},
+        -:  116:          {13, 10},
+        -:  117:          {14, 10},
+        -:  118:          {15, 10},
+        -:  119:          {16, 10},
+        -:  120:          {17, 10},
+        -:  121:          {17, 11},
+        -:  122:          {17, 12},
+        -:  123:          {17, 13},
+        -:  124:          {17, 14},
+        -:  125:          {17, 15},
+        -:  126:          {17, 16},
+        -:  127:          {17, 17},
+        -:  128:          {17, 18},
+        -:  129:          {17, 19},
+        -:  130:          {17, 20},
+        -:  131:          {17, 21},
+        -:  132:          {17, 22},
+        -:  133:          {17, 23},
+        -:  134:          {17, 24},
+        -:  135:      },
+        -:  136:      42,
+        -:  137:      BLUE};
+        1:  138:  return result;
+        -:  139:}
+        -:  140:
+        1:  141:struct Route getGreenRoute()
+        -:  142:{
+        1:  143:  struct Route result = {
+        -:  144:      {{0, 0},
+        -:  145:       {1, 0},
+        -:  146:       {2, 0},
+        -:  147:       {3, 0},
+        -:  148:       {4, 0},
+        -:  149:       {4, 1},
+        -:  150:       {4, 2},
+        -:  151:       {4, 3},
+        -:  152:       {4, 4},
+        -:  153:       {4, 5},
+        -:  154:       {4, 6},
+        -:  155:       {4, 7},
+        -:  156:       {4, 8},
+        -:  157:       {4, 9},
+        -:  158:       {4, 10},
+        -:  159:       {4, 11},
+        -:  160:       {3, 11},
+        -:  161:       {2, 11},
+        -:  162:       {1, 11},
+        -:  163:       {0, 11},
+        -:  164:       {0, 12},
+        -:  165:       {0, 13},
+        -:  166:       {0, 14},
+        -:  167:       {0, 15},
+        -:  168:       {0, 16},
+        -:  169:       {0, 17},
+        -:  170:       {0, 18},
+        -:  171:       {0, 19},
+        -:  172:       {1, 19},
+        -:  173:       {2, 19},
+        -:  174:       {3, 19},
+        -:  175:       {4, 19},
+        -:  176:       {5, 19},
+        -:  177:       {6, 19},
+        -:  178:       {7, 19},
+        -:  179:       {8, 19},
+        -:  180:       {9, 19},
+        -:  181:       {9, 20},
+        -:  182:       {9, 21},
+        -:  183:       {9, 22},
+        -:  184:       {9, 23},
+        -:  185:       {9, 24}
+        -:  186:
+        -:  187:      },
+        -:  188:      42,
+        -:  189:      GREEN};
+        1:  190:  return result;
+        -:  191:}
+        -:  192:
+        1:  193:struct Route getYellowRoute()
+        -:  194:{
+        1:  195:  struct Route result = {
+        -:  196:      {{0, 0},
+        -:  197:       {1, 0},
+        -:  198:       {2, 0},
+        -:  199:       {3, 0},
+        -:  200:       {4, 0},
+        -:  201:       {4, 1},
+        -:  202:       {4, 2},
+        -:  203:       {4, 3},
+        -:  204:       {5, 3},
+        -:  205:       {6, 3},
+        -:  206:       {7, 3},
+        -:  207:       {8, 3},
+        -:  208:       {9, 3},
+        -:  209:       {9, 2},
+        -:  210:       {9, 1},
+        -:  211:       {10, 1},
+        -:  212:       {11, 1},
+        -:  213:       {12, 1},
+        -:  214:       {13, 1},
+        -:  215:       {14, 1},
+        -:  216:       {15, 1},
+        -:  217:       {16, 1},
+        -:  218:       {17, 1},
+        -:  219:       {18, 1},
+        -:  220:       {19, 1},
+        -:  221:       {19, 2},
+        -:  222:       {19, 3},
+        -:  223:       {19, 4},
+        -:  224:       {19, 5},
+        -:  225:       {19, 6},
+        -:  226:       {19, 7},
+        -:  227:       {19, 8},
+        -:  228:       {19, 9},
+        -:  229:       {19, 10},
+        -:  230:       {19, 11},
+        -:  231:       {19, 12},
+        -:  232:       {19, 13},
+        -:  233:       {19, 14},
+        -:  234:       {19, 15},
+        -:  235:       {19, 16},
+        -:  236:       {19, 17},
+        -:  237:       {19, 18},
+        -:  238:       {19, 19},
+        -:  239:       {19, 20},
+        -:  240:       {19, 21},
+        -:  241:       {19, 22},
+        -:  242:       {19, 23},
+        -:  243:       {19, 24}},
+        -:  244:      48,
+        -:  245:      YELLOW};
+        1:  246:  return result;
+        -:  247:}
+        -:  248:
+    #####:  249:struct Map addRoute(const struct Map *map, const struct Route *route)
+        -:  250:{
+        -:  251:  int r, c;
+    #####:  252:  struct Map result = {{0}, 0};
+        -:  253:
+    #####:  254:  for (r = 0; r < map->numRows; r++)
+        -:  255:  {
+    #####:  256:    for (c = 0; c < map->numCols; c++)
+        -:  257:    {
+    #####:  258:      result.squares[r][c] = map->squares[r][c];
+    #####:  259:    }
+    #####:  260:  }
+    #####:  261:  result.numRows = map->numRows;
+    #####:  262:  result.numCols = map->numCols;
+        -:  263:
+    #####:  264:  for (r = 0; r < route->numPoints; r++)
+        -:  265:  {
+    #####:  266:    result.squares[route->points[r].row][route->points[r].col] += route->routeSymbol;
+    #####:  267:  }
+        -:  268:
+    #####:  269:  return result;
+        -:  270:}
+        -:  271:
+    27442:  272:void addPtToRoute(struct Route *route, struct Point pt)
+        -:  273:{
+    27442:  274:  route->points[route->numPoints++] = pt;
+    27442:  275:}
+        -:  276:
+    #####:  277:void addPointToRoute(struct Route *route, const int row, const int col)
+        -:  278:{
+    #####:  279:  struct Point pt = {row, col};
+    #####:  280:  addPtToRoute(route, pt);
+    #####:  281:}
+        -:  282:
+    27146:  283:void addPointToRouteIfNot(struct Route *route, const int row, const int col, const struct Point notThis)
+        -:  284:{
+    27146:  285:  struct Point pt = {row, col};
+    27146:  286:  if (notThis.row != row || notThis.col != col)
+    22726:  287:    addPtToRoute(route, pt);
+    27146:  288:}
+        -:  289:
+    28225:  290:double distance(const struct Point *p1, const struct Point *p2)
+        -:  291:{
+    28225:  292:  int deltaRow = p2->row - p1->row;
+    28225:  293:  int deltaCol = p2->col - p1->col;
+        -:  294:
+    28225:  295:  return sqrt((double)(deltaRow * deltaRow + deltaCol * deltaCol));
+        -:  296:}
+        -:  297:
+      297:  298:struct Route shortestPath(const struct Map *map, const struct Point start, const struct Point dest)
+        -:  299:{
+      297:  300:  struct Route result = {{0, 0}, 0, DIVERSION};
+      297:  301:  struct Point last = {-1, -1};
+      297:  302:  struct Point current = start;
+      297:  303:  struct Route possible = {{0, 0}, 0, 0};
+      297:  304:  int close = 0;
+        -:  305:
+     5013:  306:  while (!eqPt(current, dest) && close >= 0 && distance(&current, &dest) != 1 && result.numPoints < MAX_ROUTE)
+        -:  307:  {
+     4716:  308:    possible = getPossibleMoves(map, current, last);
+     4716:  309:    close = getClosestPoint(&possible, dest);
+     4716:  310:    if (close >= 0)
+        -:  311:    {
+     4716:  312:      last = current;
+     4716:  313:      current = possible.points[close];
+     4716:  314:      addPtToRoute(&result, current);
+     4716:  315:    }
+        -:  316:  }
+        -:  317:
+      297:  318:  return result;
+        -:  319:}
+        -:  320:
+     4716:  321:struct Route getPossibleMoves(const struct Map *map, const struct Point p1, const struct Point backpath)
+        -:  322:{
+     4716:  323:  struct Route result = {{0, 0}, 0, DIVERSION};
+        -:  324:
+     4716:  325:  if (p1.row > 0)
+        -:  326:  {
+     4647:  327:    if (map->squares[p1.row - 1][p1.col] != 1)
+     3802:  328:      addPointToRouteIfNot(&result, p1.row - 1, p1.col, backpath); // square above
+     4647:  329:    if (p1.col > 0 && map->squares[p1.row - 1][p1.col - 1] != 1)
+     3450:  330:      addPointToRouteIfNot(&result, p1.row - 1, p1.col - 1, backpath); // top left
+     4647:  331:    if (p1.col < (map->numCols - 1) && map->squares[p1.row - 1][p1.col + 1] != 1)
+     3227:  332:      addPointToRouteIfNot(&result, p1.row - 1, p1.col + 1, backpath); // top right
+     4647:  333:  }
+     4716:  334:  if (p1.col > 0 && map->squares[p1.row][p1.col - 1] != 1)
+     3591:  335:    addPointToRouteIfNot(&result, p1.row, p1.col - 1, backpath); // left
+     4716:  336:  if (p1.col < (map->numCols - 1) && map->squares[p1.row][p1.col + 1] != 1)
+     3138:  337:    addPointToRouteIfNot(&result, p1.row, p1.col + 1, backpath); // right
+     4716:  338:  if (p1.row < (map->numRows - 1))
+        -:  339:  {
+     4716:  340:    if (map->squares[p1.row + 1][p1.col] != 1)
+     3664:  341:      addPointToRouteIfNot(&result, p1.row + 1, p1.col, backpath); // square below
+     4716:  342:    if (p1.col > 0 && map->squares[p1.row + 1][p1.col - 1] != 1)
+     3446:  343:      addPointToRouteIfNot(&result, p1.row + 1, p1.col - 1, backpath); // bot left
+     4716:  344:    if (p1.col < (map->numCols - 1) && map->squares[p1.row + 1][p1.col + 1] != 1)
+     2828:  345:      addPointToRouteIfNot(&result, p1.row + 1, p1.col + 1, backpath); // top right
+     4716:  346:  }
+        -:  347:
+     4716:  348:  return result;
+        -:  349:}
+        -:  350:
+     4716:  351:int getClosestPoint(const struct Route *route, const struct Point pt)
+        -:  352:{
+     4716:  353:  int i, closestIdx = -1;
+     4716:  354:  double closestDist = 999999.9, dist;
+        -:  355:
+    27442:  356:  for (i = 0; i < route->numPoints; i++)
+        -:  357:  {
+    22726:  358:    dist = distance(&pt, &route->points[i]);
+    22726:  359:    if (dist < closestDist)
+        -:  360:    {
+    11372:  361:      closestDist = dist;
+    11372:  362:      closestIdx = i;
+    11372:  363:    }
+    22726:  364:  }
+     4716:  365:  return closestIdx;
+        -:  366:}
+        -:  367:
+     9729:  368:int eqPt(const struct Point p1, const struct Point p2)
+        -:  369:{
+     9729:  370:  return p1.row == p2.row && p1.col == p2.col;
+        -:  371:}
